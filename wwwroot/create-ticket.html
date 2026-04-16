@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIHelper | Create IT Support Ticket</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <p class="eyebrow">IT Support Ticket</p>
+                <h1>Create a New Ticket</h1>
+                <p>Submit a ticket description and optional solution so it can be added to the IT support database.</p>
+            </div>
+            <div class="status" id="statusText">Ready to create ticket.</div>
+        </header>
+
+        <section class="input-panel">
+            <div class="field-group">
+                <label for="descriptionInput">Ticket description</label>
+                <textarea id="descriptionInput" rows="5" placeholder="Describe the issue, error message, or request here..."></textarea>
+            </div>
+            <div class="field-group">
+                <label for="branchSelect">Branch</label>
+                <select id="branchSelect">
+                    <option value="">Select a branch</option>
+                </select>
+                <p class="hint">Choose the branch that owns this ticket.</p>
+            </div>
+            <div class="field-group">
+                <label for="solutionInput">Optional solution</label>
+                <textarea id="solutionInput" rows="4" placeholder="Provide a proposed solution if you have one (optional)."></textarea>
+            </div>
+            <div class="controls">
+                <span class="help-text">Click Create Ticket when ready.</span>
+                <div class="buttons">
+                    <button type="button" class="secondary" id="clearButton">Clear</button>
+                    <button type="button" class="primary" id="createButton">Create Ticket</button>
+                </div>
+            </div>
+            <div id="messageBox"></div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <a href="/search.html" class="back-link">← Back to IT Support Search</a>
+        <span style="margin: 0 0.75rem; color: rgba(255,255,255,0.5);">|</span>
+        <a href="/index.html" class="search-link">← Back to AI Chat</a>
+    </footer>
+
+    <script src="/create-ticket.js"></script>
+</body>
+</html>

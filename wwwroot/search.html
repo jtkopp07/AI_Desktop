@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIHelper | IT Support Search</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <p class="eyebrow">IT Support Database</p>
+                <h1>Search IT Support Tickets</h1>
+                <p>Search through the IT help desk database by question or solution. Find relevant support tickets and their resolutions.</p>
+            </div>
+            <div class="status" id="statusText">Ready to search.</div>
+        </header>
+
+        <section class="search-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search IT support tickets by question or solution..." />
+                <button type="button" id="searchButton">Search</button>
+                <button type="button" id="clearButton">Clear</button>
+            </div>
+
+            <div class="suggestions" id="suggestions">
+                <h3>💡 Suggested Questions</h3>
+                <div class="suggestion-list" id="suggestionList">
+                    <p>Loading suggestions...</p>
+                </div>
+            </div>
+
+            <div class="search-results" id="searchResults">
+                <div class="no-results">
+                    <p>Enter a search term above to find IT support tickets.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <a href="/index.html" class="back-link">← Back to AI Chat</a>
+            <a href="/create-ticket.html" class="search-link">+ Create New Ticket</a>
+        </footer>
+    </div>
+
+    <div id="fileProtocolWarning" class="file-warning" style="display:none; padding: 1rem; margin: 1rem; border: 1px solid #ffcc00; background: #fff8e1; color: #663c00;">
+        <strong>Warning:</strong> This page is being opened from your computer directly.
+        To use suggestions and search correctly, open it via the app server at <code>http://localhost:5000/search.html</code>.
+    </div>
+
+    <script>
+        if (window.location.protocol === 'file:') {
+            const warning = document.getElementById('fileProtocolWarning');
+            warning.style.display = 'block';
+            document.body.style.backgroundColor = '#f9f7ef';
+            document.getElementById('statusText').textContent = 'Open this page from the app server, not from disk.';
+        }
+    </script>
+    <script src="/search.js"></script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/jackkopp/AIHelper/wwwroot/search.html

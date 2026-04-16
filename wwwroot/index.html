@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIHelper | AI Assistant</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <p class="eyebrow">AI assistant</p>
+                <h1>AIHelper Chat</h1>
+                <p>Send prompts to OpenAI and receive polished responses inside a modern chat interface. Choose a model, submit your question, and watch the assistant reply.</p>
+            </div>
+            <div class="status" id="statusText">Initializing...</div>
+        </header>
+
+        <section class="chat-window">
+            <div class="tab-bar" role="tablist" aria-label="Chat mode tabs">
+                <button type="button" id="tabGeneral" class="tab active" role="tab" aria-selected="true">General AI</button>
+                <button type="button" id="tabBranch" class="tab" role="tab" aria-selected="false">Branch Data</button>
+                <button type="button" id="tabITSupport" class="tab" role="tab" aria-selected="false">IT Support</button>
+            </div>
+
+            <div class="mode-info" id="modeInfo">General AI mode: ask anything without company-specific context.</div>
+
+            <div class="messages" id="messages"></div>
+
+            <div class="input-panel">
+                <div class="input-top">
+                    <div class="field-group">
+                        <label for="modelSelect">Model</label>
+                        <select id="modelSelect">
+                            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            <option value="gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4o">gpt-4o</option>
+                            <option value="gpt-4">gpt-4</option>
+                        </select>
+                    </div>
+                    <div class="field-group file-upload-group">
+                        <label for="fileInput">Upload ZIP archive</label>
+                        <div class="file-row">
+                            <input type="file" id="fileInput" accept=".zip" />
+                            <button type="button" class="secondary" id="uploadButton">Upload</button>
+                            <button type="button" class="secondary" id="clearUploadButton">Clear files</button>
+                        </div>
+                        <p class="hint">Upload a ZIP of text files. The assistant will use the file contents when answering.</p>
+                    </div>
+                    <div class="field-group">
+                        <label>API Key</label>
+                        <p class="hint">Use the server-side environment variable <code>OPENAI_API_KEY</code>.</p>
+                    </div>
+                </div>
+
+                <div class="uploaded-files" id="uploadedFiles">
+                    <p>No uploaded files.</p>
+                </div>
+
+                <textarea id="messageInput" placeholder="Ask the AI anything..." rows="4" aria-label="Message input"></textarea>
+
+                <div class="controls">
+                    <span class="help-text">Press Enter to send, Shift+Enter for a new line.</span>
+                    <div class="buttons">
+                        <button type="button" class="secondary" id="clearButton">Clear</button>
+                        <button type="button" class="primary" id="sendButton">Send</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <a href="/search.html" class="search-link">🔍 Search IT Support Database</a>
+        <a href="/create-ticket.html" class="create-ticket-link">📝 Create New Ticket</a>
+    </footer>
+
+    <script src="/app.js"></script>
+</body>
+</html>
