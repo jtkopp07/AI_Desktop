@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIHelper | Asset Management</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🗂️ Asset Management</h1>
+                <p><a href="/dashboard.html">← Back to Dashboard</a></p>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="search-section">
+                <input type="text" id="assetSearch" placeholder="Search assets..." class="search-input">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="In Repair">In Repair</option>
+                    <option value="Retired">Retired</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button onclick="refreshAssets()" class="secondary">🔄 Refresh</button>
+                <button onclick="showAddAssetModal()" class="primary">+ Add Asset</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalAssets">0</span>
+                <span class="stat-label">Total Assets</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="activeAssets">0</span>
+                <span class="stat-label">Active</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="maintenanceAssets">0</span>
+                <span class="stat-label">Needs Maintenance</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="newAssets">0</span>
+                <span class="stat-label">New This Month</span>
+            </div>
+        </div>
+
+        <div class="assets-container">
+            <div class="assets-table">
+                <div class="table-header">
+                    <div class="col-name">Name</div>
+                    <div class="col-type">Type</div>
+                    <div class="col-location">Location</div>
+                    <div class="col-status">Status</div>
+                    <div class="col-assigned">Assigned To</div>
+                    <div class="col-actions">Actions</div>
+                </div>
+                <div id="assetsList" class="table-body">
+                    <!-- Assets inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Asset Modal -->
+        <div id="assetModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="assetModalTitle">Add New Asset</h3>
+                    <button class="modal-close" onclick="closeAssetModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="assetForm">
+                        <div class="form-group">
+                            <label for="assetName">Name</label>
+                            <input type="text" id="assetName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assetType">Type</label>
+                            <input type="text" id="assetType" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assetLocation">Location</label>
+                            <input type="text" id="assetLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assetStatus">Status</label>
+                            <select id="assetStatus">
+                                <option value="Active">Active</option>
+                                <option value="In Repair">In Repair</option>
+                                <option value="Retired">Retired</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="closeAssetModal()" class="secondary">Cancel</button>
+                            <button type="submit" class="primary">Save Asset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/asset-management.js"></script>
+</body>
+</html>

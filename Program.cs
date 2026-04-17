@@ -1,10 +1,17 @@
+using System.IO;
 using System.IO.Compression;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using AIHelper.Data;
 using AIHelper.Models;
 using AIHelper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(System.Net.IPAddress.Loopback, 0);
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=aihelper.db"));
@@ -20,6 +27,58 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var databasePath = Path.Combine(Environment.CurrentDirectory, "aihelper.db");
+    var recreateDatabase = false;
+
+    if (File.Exists(databasePath))
+    {
+        try
+        {
+            using var sqliteConnection = new SqliteConnection($"Data Source={databasePath}");
+            sqliteConnection.Open();
+            using var command = sqliteConnection.CreateCommand();
+            command.CommandText = @"SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('Users','Assets','AuditLogs','Projects','ProjectTasks','KnowledgeBaseArticles','SystemMetrics','Notifications');";
+            using var reader = command.ExecuteReader();
+            var requiredTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Users",
+                "Assets",
+                "AuditLogs",
+                "Projects",
+                "ProjectTasks",
+                "KnowledgeBaseArticles",
+                "SystemMetrics",
+                "Notifications"
+            };
+
+            while (reader.Read())
+            {
+                requiredTables.Remove(reader.GetString(0));
+            }
+
+            if (requiredTables.Count > 0)
+            {
+                recreateDatabase = true;
+            }
+        }
+        catch
+        {
+            recreateDatabase = true;
+        }
+
+        if (recreateDatabase)
+        {
+            try
+            {
+                File.Delete(databasePath);
+            }
+            catch
+            {
+                // If deletion fails, continue and let EnsureCreated handle what it can.
+            }
+        }
+    }
+
     db.Database.EnsureCreated();
 
     if (!db.Branches.Any())
@@ -122,6 +181,54 @@ using (var scope = app.Services.CreateScope())
                 Question = "How do I set up my new laptop?",
                 Solution = "Contact IT support for initial setup, software installation, and account configuration.",
                 BranchId = 1
+            });
+        db.SaveChanges();
+    }
+
+    if (!db.Users.Any())
+    {
+        db.Users.AddRange(
+            new User
+            {
+                Username = "admin",
+                Email = "admin@company.com",
+                FirstName = "Admin",
+                LastName = "User",
+                Role = "Administrator",
+                IsActive = true,
+                BranchId = 1
+            },
+            new User
+            {
+                Username = "jane.doe",
+                Email = "jane.doe@company.com",
+                FirstName = "Jane",
+                LastName = "Doe",
+                Role = "IT Support",
+                IsActive = true,
+                BranchId = 1
+            });
+        db.SaveChanges();
+    }
+
+    if (!db.Projects.Any())
+    {
+        db.Projects.AddRange(
+            new Project
+            {
+                Name = "AIHelper Migration",
+                Description = "Migrate the legacy helpdesk system to the new AIHelper portal.",
+                Status = "In Progress",
+                Priority = "High",
+                OwnerId = 1
+            },
+            new Project
+            {
+                Name = "Security Audit",
+                Description = "Perform a full security and compliance audit for the enterprise platform.",
+                Status = "Planning",
+                Priority = "Medium",
+                OwnerId = 1
             });
         db.SaveChanges();
     }
@@ -326,6 +433,279 @@ app.MapPost("/tickets", async (CreateTicketRequest request, AppDbContext db) =>
     return Results.Json(new CreateTicketResponse(ticket.OrderNumber, $"Ticket #{ticket.OrderNumber} created successfully."));
 });
 
-app.MapGet("/", () => Results.Redirect("/index.html"));
+app.MapGet("/api/tickets/count", async (AppDbContext db) =>
+{
+    var activeCount = await db.ITSupportTickets.CountAsync();
+    return Results.Json(new { active = activeCount });
+});
+
+app.MapGet("/api/tickets", async (AppDbContext db) =>
+{
+    var tickets = await db.ITSupportTickets
+        .Include(t => t.Branch)
+        .OrderBy(t => t.OrderNumber)
+        .Select(t => new
+        {
+            t.OrderNumber,
+            t.Question,
+            t.Solution,
+            BranchName = t.Branch != null ? t.Branch.Name : null
+        })
+        .ToListAsync();
+    return Results.Json(new { tickets });
+});
+
+app.MapGet("/api/users/count", async (AppDbContext db) =>
+{
+    var activeCount = await db.Users.CountAsync(u => u.IsActive);
+    return Results.Json(new { activeUsers = activeCount });
+});
+
+app.MapGet("/api/dashboard-summary", async (AppDbContext db) =>
+{
+    var totalTickets = await db.ITSupportTickets.CountAsync();
+    var activeUsers = await db.Users.CountAsync(u => u.IsActive);
+    var activeProjects = await db.Projects.CountAsync();
+
+    return Results.Json(new
+    {
+        totalTickets,
+        activeTickets = totalTickets,
+        activeUsers,
+        activeProjects,
+        averageResponse = "N/A",
+        resolutionRate = "N/A"
+    });
+});
+
+app.MapGet("/api/users", async (AppDbContext db) =>
+{
+    var users = await db.Users
+        .Include(u => u.Branch)
+        .OrderBy(u => u.LastName)
+        .Select(u => new
+        {
+            u.Id,
+            u.Username,
+            u.Email,
+            u.FirstName,
+            u.LastName,
+            u.Role,
+            u.IsActive,
+            u.CreatedAt,
+            u.LastLoginAt,
+            BranchName = u.Branch != null ? u.Branch.Name : null
+        })
+        .ToListAsync();
+
+    return Results.Json(new { users });
+});
+
+app.MapPost("/api/users", async (User user, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Email))
+    {
+        return Results.BadRequest(new { error = "Username and email are required." });
+    }
+
+    // Check if username or email already exists
+    if (await db.Users.AnyAsync(u => u.Username == user.Username || u.Email == user.Email))
+    {
+        return Results.BadRequest(new { error = "Username or email already exists." });
+    }
+
+    user.CreatedAt = DateTime.UtcNow;
+    db.Users.Add(user);
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true, userId = user.Id });
+});
+
+app.MapGet("/api/assets", async (AppDbContext db) =>
+{
+    var assets = await db.Assets
+        .OrderBy(a => a.Name)
+        .ToListAsync();
+
+    return Results.Json(new { assets });
+});
+
+app.MapPost("/api/assets", async (Asset asset, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(asset.Name) || string.IsNullOrWhiteSpace(asset.Type))
+    {
+        return Results.BadRequest(new { error = "Asset name and type are required." });
+    }
+
+    db.Assets.Add(asset);
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true, assetId = asset.Id });
+});
+
+app.MapGet("/api/projects", async (AppDbContext db) =>
+{
+    var projects = await db.Projects
+        .Include(p => p.Tasks)
+        .OrderBy(p => p.StartDate)
+        .ToListAsync();
+
+    return Results.Json(new { projects });
+});
+
+app.MapPost("/api/projects", async (Project project, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(project.Name))
+    {
+        return Results.BadRequest(new { error = "Project name is required." });
+    }
+
+    project.StartDate = DateTime.UtcNow;
+    db.Projects.Add(project);
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true, projectId = project.Id });
+});
+
+app.MapGet("/api/knowledge-base", async (AppDbContext db) =>
+{
+    var articles = await db.KnowledgeBaseArticles
+        .Where(a => a.IsPublished)
+        .OrderByDescending(a => a.CreatedAt)
+        .ToListAsync();
+
+    return Results.Json(new { articles });
+});
+
+app.MapPost("/api/knowledge-base", async (KnowledgeBaseArticle article, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(article.Title) || string.IsNullOrWhiteSpace(article.Content))
+    {
+        return Results.BadRequest(new { error = "Title and content are required." });
+    }
+
+    article.CreatedAt = DateTime.UtcNow;
+    db.KnowledgeBaseArticles.Add(article);
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true, articleId = article.Id });
+});
+
+app.MapGet("/api/audit-logs", async (string? action, string? username, int? days, AppDbContext db) =>
+{
+    var query = db.AuditLogs.AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(action))
+    {
+        query = query.Where(l => l.Action.Contains(action));
+    }
+
+    if (!string.IsNullOrWhiteSpace(username))
+    {
+        query = query.Where(l => l.Username.Contains(username));
+    }
+
+    if (days.HasValue)
+    {
+        var cutoffDate = DateTime.UtcNow.AddDays(-days.Value);
+        query = query.Where(l => l.Timestamp >= cutoffDate);
+    }
+
+    var logs = await query
+        .OrderByDescending(l => l.Timestamp)
+        .Take(100)
+        .ToListAsync();
+
+    return Results.Json(new { logs });
+});
+
+app.MapGet("/api/system-metrics", async (AppDbContext db) =>
+{
+    var metrics = await db.SystemMetrics
+        .OrderByDescending(m => m.Timestamp)
+        .Take(50)
+        .ToListAsync();
+
+    return Results.Json(new { metrics });
+});
+
+app.MapPost("/api/system-metrics", async (SystemMetric metric, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(metric.MetricName))
+    {
+        return Results.BadRequest(new { error = "Metric name is required." });
+    }
+
+    metric.Timestamp = DateTime.UtcNow;
+    db.SystemMetrics.Add(metric);
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true, metricId = metric.Id });
+});
+
+app.MapGet("/api/notifications", async (int? userId, bool? unreadOnly, AppDbContext db) =>
+{
+    var query = db.Notifications.AsQueryable();
+
+    if (userId.HasValue)
+    {
+        query = query.Where(n => n.UserId == userId.Value);
+    }
+
+    if (unreadOnly == true)
+    {
+        query = query.Where(n => !n.IsRead);
+    }
+
+    var notifications = await query
+        .OrderByDescending(n => n.CreatedAt)
+        .Take(20)
+        .ToListAsync();
+
+    return Results.Json(new { notifications });
+});
+
+app.MapPost("/api/notifications/{id}/read", async (int id, AppDbContext db) =>
+{
+    var notification = await db.Notifications.FindAsync(id);
+    if (notification == null)
+    {
+        return Results.NotFound(new { error = "Notification not found." });
+    }
+
+    notification.IsRead = true;
+    notification.ReadAt = DateTime.UtcNow;
+    await db.SaveChangesAsync();
+
+    return Results.Json(new { success = true });
+});
+
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    try
+    {
+        var server = app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.Server.IServer>();
+        var addressesFeature = server.Features.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>();
+        var address = addressesFeature?.Addresses.FirstOrDefault() ?? "http://localhost:5000";
+        var url = new Uri(new Uri(address), "dashboard.html").ToString();
+
+        if (OperatingSystem.IsWindows())
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("open", url) { UseShellExecute = true });
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("xdg-open", url) { UseShellExecute = true });
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to open browser: {ex.Message}");
+    }
+});
 
 app.Run();

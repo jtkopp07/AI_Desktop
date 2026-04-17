@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIHelper | API Tester</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🧪 API Tester</h1>
+                <p><a href="/dashboard.html">← Back to Dashboard</a></p>
+            </div>
+        </header>
+
+        <div class="api-tester-container">
+            <div class="api-controls">
+                <div class="control-group">
+                    <label for="method">Method:</label>
+                    <select id="method">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="endpoint">Endpoint:</label>
+                    <input type="text" id="endpoint" placeholder="/api/users" list="endpoints">
+                    <datalist id="endpoints">
+                        <option value="/api/users">
+                        <option value="/api/assets">
+                        <option value="/api/projects">
+                        <option value="/api/knowledge-base">
+                        <option value="/api/audit-logs">
+                        <option value="/api/system-metrics">
+                        <option value="/api/notifications">
+                        <option value="/branches">
+                        <option value="/api/tickets">
+                        <option value="/api/chat">
+                    </datalist>
+                </div>
+
+                <div class="control-group">
+                    <label for="requestBody">Request Body (JSON):</label>
+                    <textarea id="requestBody" placeholder='{"key": "value"}' rows="6"></textarea>
+                </div>
+
+                <div class="control-group">
+                    <button onclick="sendRequest()" class="primary">Send Request</button>
+                    <button onclick="clearResults()" class="secondary">Clear</button>
+                </div>
+            </div>
+
+            <div class="api-results">
+                <div class="result-section">
+                    <h3>Response</h3>
+                    <div class="response-meta">
+                        <span id="statusCode">-</span>
+                        <span id="responseTime">-</span>
+                    </div>
+                    <pre id="responseBody">No response yet</pre>
+                </div>
+
+                <div class="result-section">
+                    <h3>Request History</h3>
+                    <div id="requestHistory" class="history-list">
+                        <!-- History will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-docs">
+            <h3>Available Endpoints</h3>
+            <div class="endpoint-list">
+                <div class="endpoint-group">
+                    <h4>Users</h4>
+                    <ul>
+                        <li><code>GET /api/users</code> - Get all users</li>
+                        <li><code>POST /api/users</code> - Create user</li>
+                        <li><code>PUT /api/users/{id}</code> - Update user</li>
+                        <li><code>DELETE /api/users/{id}</code> - Delete user</li>
+                    </ul>
+                </div>
+
+                <div class="endpoint-group">
+                    <h4>Assets</h4>
+                    <ul>
+                        <li><code>GET /api/assets</code> - Get all assets</li>
+                        <li><code>POST /api/assets</code> - Create asset</li>
+                        <li><code>PUT /api/assets/{id}</code> - Update asset</li>
+                        <li><code>DELETE /api/assets/{id}</code> - Delete asset</li>
+                    </ul>
+                </div>
+
+                <div class="endpoint-group">
+                    <h4>Projects</h4>
+                    <ul>
+                        <li><code>GET /api/projects</code> - Get all projects</li>
+                        <li><code>POST /api/projects</code> - Create project</li>
+                        <li><code>PUT /api/projects/{id}</code> - Update project</li>
+                        <li><code>DELETE /api/projects/{id}</code> - Delete project</li>
+                    </ul>
+                </div>
+
+                <div class="endpoint-group">
+                    <h4>Knowledge Base</h4>
+                    <ul>
+                        <li><code>GET /api/knowledge-base</code> - Get all articles</li>
+                        <li><code>POST /api/knowledge-base</code> - Create article</li>
+                        <li><code>PUT /api/knowledge-base/{id}</code> - Update article</li>
+                        <li><code>DELETE /api/knowledge-base/{id}</code> - Delete article</li>
+                    </ul>
+                </div>
+
+                <div class="endpoint-group">
+                    <h4>System</h4>
+                    <ul>
+                        <li><code>GET /api/audit-logs</code> - Get audit logs</li>
+                        <li><code>GET /api/system-metrics</code> - Get system metrics</li>
+                        <li><code>GET /api/notifications</code> - Get notifications</li>
+                        <li><code>GET /branches</code> - Get branches</li>
+                        <li><code>GET /api/tickets</code> - Get IT support tickets</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/navigation.js"></script>
+    <script src="/api-tester.js"></script>
+</body>
+</html>

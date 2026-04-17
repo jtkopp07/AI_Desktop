@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIHelper | User Management</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>👥 User Management</h1>
+                <p><a href="/dashboard.html">← Back to Dashboard</a></p>
+            </div>
+        </header>
+
+        <div class="toolbar">
+            <div class="search-section">
+                <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
+                <select id="roleFilter" class="filter-select">
+                    <option value="">All Roles</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Manager">Manager</option>
+                    <option value="User">User</option>
+                </select>
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button onclick="refreshUsers()" class="secondary">🔄 Refresh</button>
+                <button onclick="exportUsers()" class="secondary">📊 Export</button>
+                <button onclick="showAddUserModal()" class="primary">+ Add User</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalUsers">0</span>
+                <span class="stat-label">Total Users</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="activeUsers">0</span>
+                <span class="stat-label">Active</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="adminUsers">0</span>
+                <span class="stat-label">Admins</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="newUsers">0</span>
+                <span class="stat-label">New This Month</span>
+            </div>
+        </div>
+
+        <div class="users-container">
+            <div class="users-table">
+                <div class="table-header">
+                    <div class="col-name">Name</div>
+                    <div class="col-email">Email</div>
+                    <div class="col-role">Role</div>
+                    <div class="col-branch">Branch</div>
+                    <div class="col-status">Status</div>
+                    <div class="col-lastlogin">Last Login</div>
+                    <div class="col-actions">Actions</div>
+                </div>
+                <div id="usersList" class="table-body">
+                    <!-- Users will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit User Modal -->
+        <div id="userModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Add New User</h3>
+                    <span class="modal-close" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select id="role" required>
+                                <option value="User">User</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="branchId">Branch</label>
+                            <select id="branchId">
+                                <option value="">Select Branch</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="closeModal()" class="secondary">Cancel</button>
+                            <button type="submit" class="primary">Save User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/navigation.js"></script>
+    <script src="/user-management.js"></script>
+</body>
+</html>

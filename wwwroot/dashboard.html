@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIHelper | Enterprise Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>🚀 AIHelper Enterprise</h1>
+                    <p>Comprehensive IT & Development Platform</p>
+                </div>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <span class="user-name">Welcome, Admin</span>
+                        <span class="user-role">System Administrator</span>
+                    </div>
+                    <div class="quick-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="activeTickets">0</span>
+                            <span class="stat-label">Active Tickets</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="systemHealth">98%</span>
+                            <span class="stat-label">System Health</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="onlineUsers">12</span>
+                            <span class="stat-label">Online Users</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="main-navigation">
+            <div class="nav-section">
+                <h3>🏠 Dashboard</h3>
+                <button class="nav-button" onclick="navigateTo('dashboard')">Main Dashboard</button>
+                <button class="nav-button" onclick="navigateTo('analytics')">Analytics Overview</button>
+                <button class="nav-button" onclick="navigateTo('reports')">System Reports</button>
+            </div>
+            <div class="nav-section">
+                <h3>🎫 IT Support</h3>
+                <button class="nav-button" onclick="navigateTo('tickets')">Ticket Management</button>
+                <button class="nav-button" onclick="navigateTo('create-ticket')">Create New Ticket</button>
+                <button class="nav-button" onclick="navigateTo('ticket-search')">Advanced Search</button>
+                <button class="nav-button" onclick="navigateTo('ai-chat')">AI Support</button>
+                <button class="nav-button" onclick="navigateTo('ticket-analytics')">Ticket Analytics</button>
+            </div>
+            <div class="nav-section">
+                <h3>💻 Development</h3>
+                <button class="nav-button" onclick="navigateTo('code-editor')">Code Editor</button>
+                <button class="nav-button" onclick="navigateTo('api-tester')">API Tester</button>
+                <button class="nav-button" onclick="navigateTo('database-query')">Database Query</button>
+                <button class="nav-button" onclick="navigateTo('git-integration')">Git Integration</button>
+                <button class="nav-button" onclick="navigateTo('code-review')">Code Review</button>
+                <button class="nav-button" onclick="navigateTo('testing-tools')">Testing Tools</button>
+            </div>
+            <div class="nav-section">
+                <h3>🔧 System Admin</h3>
+                <button class="nav-button" onclick="navigateTo('user-management')">User Management</button>
+                <button class="nav-button" onclick="navigateTo('asset-management')">Asset Management</button>
+                <button class="nav-button" onclick="navigateTo('backup-restore')">Backup & Restore</button>
+                <button class="nav-button" onclick="navigateTo('system-monitoring')">System Monitoring</button>
+                <button class="nav-button" onclick="navigateTo('security-audit')">Security Audit</button>
+                <button class="nav-button" onclick="navigateTo('configuration')">System Config</button>
+            </div>
+            <div class="nav-section">
+                <h3>📊 Analytics</h3>
+                <button class="nav-button" onclick="navigateTo('performance-metrics')">Performance Metrics</button>
+                <button class="nav-button" onclick="navigateTo('usage-statistics')">Usage Statistics</button>
+                <button class="nav-button" onclick="navigateTo('trend-analysis')">Trend Analysis</button>
+                <button class="nav-button" onclick="navigateTo('custom-reports')">Custom Reports</button>
+                <button class="nav-button" onclick="navigateTo('data-visualization')">Data Visualization</button>
+            </div>
+            <div class="nav-section">
+                <h3>📚 Knowledge Base</h3>
+                <button class="nav-button" onclick="navigateTo('documentation')">Documentation</button>
+                <button class="nav-button" onclick="navigateTo('faq')">FAQ Library</button>
+                <button class="nav-button" onclick="navigateTo('tutorials')">Tutorials</button>
+                <button class="nav-button" onclick="navigateTo('best-practices')">Best Practices</button>
+                <button class="nav-button" onclick="navigateTo('troubleshooting')">Troubleshooting</button>
+            </div>
+            <div class="nav-section">
+                <h3>👥 Collaboration</h3>
+                <button class="nav-button" onclick="navigateTo('team-chat')">Team Chat</button>
+                <button class="nav-button" onclick="navigateTo('project-boards')">Project Boards</button>
+                <button class="nav-button" onclick="navigateTo('file-sharing')">File Sharing</button>
+                <button class="nav-button" onclick="navigateTo('meeting-scheduler')">Meeting Scheduler</button>
+                <button class="nav-button" onclick="navigateTo('task-management')">Task Management</button>
+            </div>
+            <div class="nav-section">
+                <h3>🔒 Security</h3>
+                <button class="nav-button" onclick="navigateTo('access-control')">Access Control</button>
+                <button class="nav-button" onclick="navigateTo('audit-logs')">Audit Logs</button>
+                <button class="nav-button" onclick="navigateTo('compliance')">Compliance</button>
+                <button class="nav-button" onclick="navigateTo('threat-detection')">Threat Detection</button>
+                <button class="nav-button" onclick="navigateTo('encryption-tools')">Encryption Tools</button>
+            </div>
+            <div class="nav-section">
+                <h3>⚙️ Tools & Utilities</h3>
+                <button class="nav-button" onclick="navigateTo('calculator')">Advanced Calculator</button>
+                <button class="nav-button" onclick="navigateTo('converter')">Unit Converter</button>
+                <button class="nav-button" onclick="navigateTo('scheduler')">Task Scheduler</button>
+                <button class="nav-button" onclick="navigateTo('notepad')">Digital Notepad</button>
+                <button class="nav-button" onclick="navigateTo('bookmarks')">Bookmark Manager</button>
+            </div>
+        </nav>
+
+        <main class="dashboard-main">
+            <section class="welcome-section">
+                <h2>Welcome to AIHelper Enterprise</h2>
+                <p>Your comprehensive platform for IT support, development tools, and enterprise management.</p>
+                <div class="quick-actions">
+                    <button class="action-button primary" onclick="navigateTo('tickets')">
+                        📋 View Tickets
+                    </button>
+                    <button class="action-button secondary" onclick="navigateTo('code-editor')">
+                        💻 Open Code Editor
+                    </button>
+                    <button class="action-button tertiary" onclick="navigateTo('analytics')">
+                        📊 View Analytics
+                    </button>
+                </div>
+            </section>
+
+            <section class="dashboard-widgets">
+                <div class="widget">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list" id="recentActivity">
+                        <div class="activity-item">
+                            <span class="activity-time">2 min ago</span>
+                            <span class="activity-desc">New ticket #1023 created</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">5 min ago</span>
+                            <span class="activity-desc">Code review completed for PR #45</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">10 min ago</span>
+                            <span class="activity-desc">System backup completed successfully</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3>System Status</h3>
+                    <div class="status-indicators">
+                        <div class="status-item">
+                            <span class="status-label">Database</span>
+                            <span class="status-value healthy">● Online</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">API Services</span>
+                            <span class="status-value healthy">● Running</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">File Storage</span>
+                            <span class="status-value healthy">● Available</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Email Service</span>
+                            <span class="status-value warning">● Degraded</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3>Quick Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalTicketsValue">0</div>
+                            <div class="stat-label">Total Tickets</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="resolutionRateValue">N/A</div>
+                            <div class="stat-label">Resolution Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgResponseValue">N/A</div>
+                            <div class="stat-label">Avg Response</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="activeProjectsValue">0</div>
+                            <div class="stat-label">Active Projects</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="feature-highlights">
+                <h3>🚀 Featured Tools</h3>
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="navigateTo('ai-chat')">
+                        <div class="feature-icon">🤖</div>
+                        <h4>AI Assistant</h4>
+                        <p>Advanced AI-powered support and code assistance</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('code-editor')">
+                        <div class="feature-icon">💻</div>
+                        <h4>Code Editor</h4>
+                        <p>Integrated development environment with syntax highlighting</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('database-query')">
+                        <div class="feature-icon">🗄️</div>
+                        <h4>Database Tools</h4>
+                        <p>Query and manage databases with visual tools</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('analytics')">
+                        <div class="feature-icon">📊</div>
+                        <h4>Analytics</h4>
+                        <p>Comprehensive reporting and data visualization</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('team-chat')">
+                        <div class="feature-icon">💬</div>
+                        <h4>Team Chat</h4>
+                        <p>Real-time collaboration and communication</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('security-audit')">
+                        <div class="feature-icon">🔒</div>
+                        <h4>Security</h4>
+                        <p>Advanced security monitoring and compliance</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/navigation.js"></script>
+    <script src="/dashboard.js"></script>
+</body>
+</html></content>
+<parameter name="filePath">/Users/jackkopp/AIHelper/wwwroot/dashboard.html

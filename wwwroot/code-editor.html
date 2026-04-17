@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIHelper | Code Editor</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .code-editor-container {
+            display: flex;
+            height: calc(100vh - 200px);
+            gap: 10px;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            padding: 10px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .language-select, .theme-select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .code-textarea {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            border: none;
+            outline: none;
+            resize: none;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .output-panel {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .output-toolbar {
+            padding: 10px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .output-area {
+            flex: 1;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            background: #000;
+            color: #00ff00;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .run-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .run-button:hover {
+            background: #218838;
+        }
+
+        .file-explorer {
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-explorer-header {
+            padding: 10px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-item:hover {
+            background: #f8f9fa;
+        }
+
+        .file-item.active {
+            background: #e3f2fd;
+            font-weight: bold;
+        }
+
+        .code-snippets {
+            margin-top: 20px;
+        }
+
+        .snippet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .snippet-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .snippet-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .snippet-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .snippet-desc {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>💻 Advanced Code Editor</h1>
+                <p><a href="/dashboard.html">← Back to Dashboard</a></p>
+            </div>
+        </header>
+
+        <div class="code-editor-container">
+            <div class="file-explorer">
+                <div class="file-explorer-header">📁 Files</div>
+                <div class="file-list" id="fileList">
+                    <div class="file-item active" onclick="selectFile('main.py')">main.py</div>
+                    <div class="file-item" onclick="selectFile('utils.py')">utils.py</div>
+                    <div class="file-item" onclick="selectFile('config.json')">config.json</div>
+                    <div class="file-item" onclick="selectFile('README.md')">README.md</div>
+                </div>
+            </div>
+
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <select class="language-select" id="languageSelect">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C++</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="sql">SQL</option>
+                        <option value="json">JSON</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+                    <select class="theme-select" id="themeSelect">
+                        <option value="dark">Dark Theme</option>
+                        <option value="light">Light Theme</option>
+                    </select>
+                    <button onclick="runCode()" class="run-button">▶️ Run Code</button>
+                    <button onclick="saveFile()" class="secondary">💾 Save</button>
+                    <button onclick="formatCode()" class="secondary">🎨 Format</button>
+                    <button onclick="shareCode()" class="secondary">🔗 Share</button>
+                </div>
+                <textarea class="code-textarea" id="codeEditor" placeholder="Write your code here..."># Welcome to AIHelper Code Editor
+# This is a powerful coding environment with syntax highlighting,
+# code execution, and collaboration features.
+
+def hello_world():
+    print("Hello, World!")
+    return "Welcome to AIHelper!"
+
+if __name__ == "__main__":
+    result = hello_world()
+    print(f"Result: {result}")</textarea>
+            </div>
+
+            <div class="output-panel">
+                <div class="output-toolbar">
+                    <span>📤 Output</span>
+                    <button onclick="clearOutput()" class="secondary">🗑️ Clear</button>
+                    <button onclick="downloadOutput()" class="secondary">💾 Download</button>
+                </div>
+                <div class="output-area" id="outputArea">Ready to run code...</div>
+            </div>
+        </div>
+
+        <div class="code-snippets">
+            <h3>🚀 Code Snippets</h3>
+            <div class="snippet-grid" id="snippetGrid">
+                <!-- Snippets will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/navigation.js"></script>
+    <script src="/code-editor.js"></script>
+</body>
+</html>
